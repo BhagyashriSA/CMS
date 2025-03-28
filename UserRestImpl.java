@@ -1,5 +1,7 @@
 package com.in.cafe.restimpl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List
 ;
@@ -13,10 +15,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.in.cafe.contents.CafeConstant;
+import com.in.cafe.pojo.Auther;
+import com.in.cafe.pojo.Book;
+import com.in.cafe.pojo.CafeUser;
+import com.in.cafe.pojo.Employee;
+import com.in.cafe.pojo.Manager;
+import com.in.cafe.pojo.Person;
 import com.in.cafe.pojo.User;
 import com.in.cafe.rest.UserRest;
+import com.in.cafe.service.Personservice;
 import com.in.cafe.service.UserService;
 import com.in.cafe.util.CafeUtil;
+
+import jakarta.mail.MessagingException;
 
 
 
@@ -25,6 +36,10 @@ public class UserRestImpl implements UserRest {
 	
 	@Autowired
     UserService userservice;
+	
+	@Autowired
+	Personservice personService;
+	
     
 	@Override
 	public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -41,6 +56,8 @@ public class UserRestImpl implements UserRest {
 	public ResponseEntity<List<User>> getUser() {
 	    List<User> users; // Declare outside try block
 	    try {
+	    	userservice.createUser("riya", "riya@gmail.com");
+//	    	userservice.sendEmail("abc@gmail.com", "Snding Mail Demo Code", "Mail sent successfully");
 	        users = userservice.getUser();
 	        return new ResponseEntity<>(users, HttpStatus.OK); // Return 200 OK for success
 	    } catch (Exception e) {
@@ -98,10 +115,202 @@ public class UserRestImpl implements UserRest {
     }
 
 	@Override
-	public String sendEmail(String to, String subject, String body) {
+	public String sendEmail(Map<String, String> requestBody) {
 		// TODO Auto-generated method stub
+	    String to = requestBody.get("to");
+	    String subject = requestBody.get("subject");
+	    String body = requestBody.get("body");
 		userservice.sendEmail(to, subject, body);
         return "Email Sent Successfully!";
 	}
 
-}
+	@Override
+	public String sendMailById() {
+		// TODO Auto-generated method stub
+		userservice.sendEmail("abc@gmail.com", "Snding Mail Demo Code through rest api", "Mail sent successfully to ABC");
+        return "Email Sent Successfully! 0000";
+	}
+
+	@Override
+	public ResponseEntity<String> createUser(String name, String email) {
+		// TODO Auto-generated method stub
+	     userservice.createUser(name, email);
+	     System.out.println("name and email is " + name + " " + email);
+	     return null;
+	}
+
+	@Override
+	public String show() {
+		// TODO Auto-generated method stub
+		return "Hello welcome to code management system";
+	}
+	
+	
+    //correct code for @mappedsuperclass demo
+	@Override
+	public ResponseEntity<String> takeInput(Employee employee) {
+		// TODO Auto-generated method stub
+		 userservice.createUser(employee.getName(), employee.getEmail());
+		System.out.println("Name is " +employee.getName()+ " " + employee.getEmail());
+		return ResponseEntity.ok("BaseEntoty mapped succesfully");
+	}
+
+	@Override
+	public ResponseEntity<String> savePersonData(Person person) {
+		// TODO Auto-generated method stub
+		try {
+			personService.savePersonData(person, person.getPassport());
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return ResponseEntity.ok("Data inserted successfully");
+	}
+
+	@Override
+	public ResponseEntity<Optional<Person>> getPersonById(Long id) {
+		// TODO Auto-generated method stub
+	    Optional<Person> person = personService.getPersonById(id);
+	    return ResponseEntity.ok(person);
+	}
+
+	@Override
+	public String saveManager(Manager manager) {
+		// TODO Auto-generated method stub
+		try {
+			return userservice.saveManager(manager);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return "Manager saved successfully";
+	}
+
+	@Override
+	public ResponseEntity<Auther> saveAuther(Auther auther) {
+		// TODO Auto-generated method stub
+		try {
+			Auther savedAuther = userservice.saveAuther(auther);
+	        return new ResponseEntity<>(savedAuther, HttpStatus.CREATED);
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<Book> saveBook(Book book) {
+		// TODO Auto-generated method stub
+		try {
+			Book saveBook = userservice.saveBook(book);
+		    return new ResponseEntity<>(saveBook, HttpStatus.CREATED);
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Auther>> getAllAuther() {
+		// TODO Auto-generated method stub
+		try {
+			List<Auther> list = userservice.getAllAuther();
+		    return new ResponseEntity<>(list, HttpStatus.CREATED);
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Book>> getAllBook() {
+		// TODO Auto-generated method stub
+		try {
+			List<Book> list = userservice.getAllBook();
+		    return new ResponseEntity<>(list, HttpStatus.CREATED);
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public String saveCafeUser(CafeUser cafeUser) {
+		// TODO Auto-generated method stub
+		try {
+			userservice.saveCafeUser(cafeUser);
+		} catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return "CafeUsers save successfullly";
+	}
+
+	@Override
+	public ResponseEntity<String> forgotPassword(Map<String, String> request) {
+		// TODO Auto-generated method stub
+        String email = request.get("email");
+        try {
+        	userservice.generatePasswordResetToken(email);
+            return ResponseEntity.ok("Password reset email sent.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+	}
+
+	@Override
+	public ResponseEntity<String> resetPassword(Map<String, String> request) {
+		// TODO Auto-generated method stub
+        String token = request.get("token");
+        String newPassword = request.get("password");
+        try {
+        	userservice.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Password successfully reset.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+	@Override
+	public ResponseEntity<String> changePassword(Map<String, String> request) {
+		// TODO Auto-generated method stub
+        try {
+        	userservice.changePassword(request);
+            return ResponseEntity.ok("Password successfully changed.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+	}
+
+	@Override
+	public ResponseEntity<String> sendEmailWithAttachment(Map<String, String> filePath) {
+		// TODO Auto-generated method stub
+        File file = new File(filePath.get("filepath"));
+        try {
+        	userservice.sendEmailWithAttachment(file);
+        	 return ResponseEntity.ok("Email sent successfully!");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(500).body("Error sending email: " + e.getMessage());
+        }
+	}
+
+	}
+	
+
+//	@Override
+//	public ResponseEntity<String> checkToken() {
+//		// TODO Auto-generated method stub
+//		Boolean statusOfToken = userservice.checkToken();
+//		if(statusOfToken) {
+//			return ResponseEntity.ok("Token is available");
+//		}
+//		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                .body("Token not found");
+//	}
+
+
