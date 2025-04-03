@@ -1,6 +1,7 @@
 package com.in.cafe.serviceimpl;
 
 import java.io.File;
+
 import java.util.List;
 
 import java.util.Map;
@@ -16,13 +17,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.in.cafe.contents.CafeConstant;
 import com.in.cafe.dao.AutherRepository;
 import com.in.cafe.dao.BookRepository;
 import com.in.cafe.dao.CafeUserRepository;
+import com.in.cafe.dao.CategoryRepository;
+import com.in.cafe.dao.CourseRepository;
 import com.in.cafe.dao.EmployeeDao;
 import com.in.cafe.dao.ManagerRepository;
+import com.in.cafe.dao.ProductRepository;
+import com.in.cafe.dao.StudentRepository;
 import com.in.cafe.dao.UserDao;
 import com.in.cafe.service.UserService;
 import com.in.cafe.util.CafeUtil;
@@ -33,9 +39,13 @@ import jakarta.mail.internet.MimeMessage;
 import com.in.cafe.pojo.Auther;
 import com.in.cafe.pojo.Book;
 import com.in.cafe.pojo.CafeUser;
+import com.in.cafe.pojo.Category;
+import com.in.cafe.pojo.Course;
 import com.in.cafe.pojo.Employee;
 import com.in.cafe.pojo.Manager;
+import com.in.cafe.pojo.Product;
 import com.in.cafe.pojo.Staff;
+import com.in.cafe.pojo.Student;
 import com.in.cafe.pojo.User;
 
 
@@ -62,6 +72,18 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	CafeUserRepository cafeRepository;
+	
+	@Autowired
+	ProductRepository productRepository;
+	
+	@Autowired
+	CategoryRepository categoryRepository;
+	
+	@Autowired
+	StudentRepository studentRepository;
+	
+	@Autowired
+	CourseRepository courseRepository ;
 
 
 	@Override
@@ -109,7 +131,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getUser() {
 		List<User> user = userDao.findAll();
-//     	sendEmail("abcy@gmail.com","CMS Mail","User registered successfully");
+//     	sendEmail("bhagyashrisay@gmail.com","CMS Mail","User registered successfully");
 		return user; 
 	}
 	
@@ -141,7 +163,7 @@ public class UserServiceImpl implements UserService {
 	public void sendEmail(String to, String subject, String body) {
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("xyz@gmail.com");
+		message.setFrom("kiransayankar091@gmail.com");
 		message.setTo(to);
 		message.setSubject(subject);
 		message.setText(body);
@@ -225,7 +247,7 @@ public class UserServiceImpl implements UserService {
 		
 		System.out.println("resetnpassword link :" + resetLink);
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("xyz@gmail.com");
+		message.setFrom("kiransayankar091@gmail.com");
 		message.setTo(cafeuser.getEmail());
 		message.setSubject("Password Reset Request");
 		message.setText("To reset your password, click the link below:\n" + resetLink);
@@ -267,11 +289,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void sendEmailWithAttachment(File file) throws MessagingException  {
 		// TODO Auto-generated method stub
-		String to = "abc@gmail.com";
+		String to = "bhagyashrisay@gmail.com";
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true); // true indicates multipart message
 
-        helper.setFrom("xyz@gmail.com");
+        helper.setFrom("kiransayankar091@gmail.com");
         helper.setTo(to);
 		helper.setSubject("Please Find Attached [Document/File]");
 		helper.setText("Please find the attachment.");
@@ -282,9 +304,98 @@ public class UserServiceImpl implements UserService {
         }  
         mailSender.send(message);
 	}
-	
+
+	@Override
+	public void createProduct(Product product) {
+		// TODO Auto-generated method stub
+		productRepository.save(product);
 	}
 
+	@Override
+	public void createCategory(Category category) {
+		// TODO Auto-generated method stub
+		categoryRepository.save(category);
+	}
+
+	@Override
+	public List<Product> getAllProduct() {
+		// TODO Auto-generated method stub
+		return productRepository.findAll();
+	}
+
+	@Override
+	public List<Category> getAllCategory() {
+		// TODO Auto-generated method stub
+		return categoryRepository.findAll();
+	}
+
+	@Override
+	public Optional<Product> getProductById(Long id) {
+		// TODO Auto-generated method stub
+		Optional<Product> product = Optional.ofNullable(productRepository.getById(id));
+		return product;
+	}
+
+	@Override
+	public Optional<Category> getCategoryById(Long id) {
+		// TODO Auto-generated method stub
+		Optional<Category> category = Optional.ofNullable(categoryRepository.getById(id));
+		return category;
+	}
+
+	@Override
+	public Product getProById(Long id) {
+		// TODO Auto-generated method stub
+        return productRepository.findById(id).orElseThrow(() -> 
+        new RuntimeException("Product not found"));
+	}
+
+	@Override
+	public Category getCatgryById(Long id) {
+		// TODO Auto-generated method stu categoryRepository
+		 return categoryRepository.findById(id).orElseThrow(() -> 
+	        new RuntimeException("Category not found"));
+	}
+
+	@Override
+	@Transactional
+	public Student createStudent(Student student) {
+		// TODO Auto-generated method stub
+		return studentRepository.save(student);
+	}
+
+	@Override
+	@Transactional
+	public Course createCourse(Course course) {
+		// TODO Auto-generated method stub
+		return courseRepository.save(course);
+	}
+
+	@Override
+	public List<Student> getAllStudent() {
+		// TODO Auto-generated method stub
+		return studentRepository.findAll();
+	}
+
+	@Override
+	public List<Course> getAllCourse() {
+		// TODO Auto-generated method stub
+		return courseRepository.findAll();
+	}
+
+	@Override
+	public Student getStudentById(Long id) {
+		// TODO Auto-generated method stub
+		return studentRepository.getById(id);
+	}
+
+	@Override
+	public Course getCourseById(Long id) {
+		// TODO Auto-generated method stub
+		return courseRepository.getById(id);
+	}
+	
+	}
 
 
 	

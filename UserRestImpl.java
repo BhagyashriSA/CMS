@@ -18,9 +18,13 @@ import com.in.cafe.contents.CafeConstant;
 import com.in.cafe.pojo.Auther;
 import com.in.cafe.pojo.Book;
 import com.in.cafe.pojo.CafeUser;
+import com.in.cafe.pojo.Category;
+import com.in.cafe.pojo.Course;
 import com.in.cafe.pojo.Employee;
 import com.in.cafe.pojo.Manager;
 import com.in.cafe.pojo.Person;
+import com.in.cafe.pojo.Product;
+import com.in.cafe.pojo.Student;
 import com.in.cafe.pojo.User;
 import com.in.cafe.rest.UserRest;
 import com.in.cafe.service.Personservice;
@@ -57,7 +61,7 @@ public class UserRestImpl implements UserRest {
 	    List<User> users; // Declare outside try block
 	    try {
 	    	userservice.createUser("riya", "riya@gmail.com");
-//	    	userservice.sendEmail("abc@gmail.com", "Snding Mail Demo Code", "Mail sent successfully");
+//	    	userservice.sendEmail("bhagyashrisay@gmail.com", "Snding Mail Demo Code", "Mail sent successfully");
 	        users = userservice.getUser();
 	        return new ResponseEntity<>(users, HttpStatus.OK); // Return 200 OK for success
 	    } catch (Exception e) {
@@ -127,7 +131,7 @@ public class UserRestImpl implements UserRest {
 	@Override
 	public String sendMailById() {
 		// TODO Auto-generated method stub
-		userservice.sendEmail("abc@gmail.com", "Snding Mail Demo Code through rest api", "Mail sent successfully to ABC");
+		userservice.sendEmail("bhagyashrisay@gmail.com", "Snding Mail Demo Code through rest api", "Mail sent successfully to Bhagyashri Sayankar");
         return "Email Sent Successfully! 0000";
 	}
 
@@ -299,7 +303,146 @@ public class UserRestImpl implements UserRest {
         }
 	}
 
+	@Override
+	public ResponseEntity<String> createProduct(Product product) {
+		// TODO Auto-generated method stub
+	      try {
+	        	userservice.createProduct(product);
+	        	 return ResponseEntity.ok("Product created successfully!");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(500).body("Error in creating product: " + e.getMessage());
+	        }
 	}
+
+	@Override
+	public ResponseEntity<String> createCategory(Category category) {
+		// TODO Auto-generated method stub
+	      try {
+	        	userservice.createCategory(category);
+	        	 return ResponseEntity.ok("Category created successfully!");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(500).body("Error in creating Category: " + e.getMessage());
+	        }
+	}
+
+	@Override
+	public ResponseEntity<List<Product>> getAllProduct() {
+		// TODO Auto-generated method stub
+		try {
+			List<Product> listOfProduct = userservice.getAllProduct();
+			return ResponseEntity.ok(listOfProduct);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Collections.emptyList());  
+		}
+	}
+
+	@Override
+	public ResponseEntity<List<Category>> getAllCategory() {
+		// TODO Auto-generated method stub
+		try {
+			List<Category> listOfCategory = userservice.getAllCategory();
+			return ResponseEntity.ok(listOfCategory);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Collections.emptyList());  
+		}
+	}
+
+	@Override
+	public ResponseEntity<Optional<Product>> getProductById(Long id) {
+		// TODO Auto-generated method stub
+		try {
+			Optional<Product> product = userservice.getProductById(id);
+			return ResponseEntity.ok(product);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Optional.empty());  
+		}
+	}
+
+	@Override
+	public ResponseEntity<Optional<Category>> getCategoryById(Long id) {
+		// TODO Auto-generated method stub
+		try {
+			Optional<Category> category = userservice.getCategoryById(id);
+			return ResponseEntity.ok(category);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Optional.empty());  
+		}
+	}
+	
+    public Product getProById(@PathVariable Long id) {
+        return userservice.getProById(id);
+    }
+
+	@Override
+	public Category getCatgryById(Long id) {
+		// TODO Auto-generated method stub
+		return userservice.getCatgryById(id);
+	}
+
+	@Override
+	public Student createStudent(Student student) {
+		// TODO Auto-generated method stub
+		return userservice.createStudent(student);
+	}
+
+	@Override
+	public Course createCourse(Course course) {
+		// TODO Auto-generated method stub
+		return userservice.createCourse(course);
+	}
+
+	@Override
+	public ResponseEntity<List<Student>> getAllStudent() {
+		// TODO Auto-generated method stub
+		try {
+			List<Student> listOfStudent = userservice.getAllStudent();
+			return ResponseEntity.ok(listOfStudent);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Collections.emptyList());  
+		}
+	}
+
+	@Override
+	public ResponseEntity<List<Course>> getAllCourse() {
+		// TODO Auto-generated method stub
+		try {
+			List<Course> listOfCourse = userservice.getAllCourse();
+			return ResponseEntity.ok(listOfCourse);
+		} catch (Exception e) {
+	        // Return bad request with a custom error message
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(Collections.emptyList());  
+		}
+	}
+
+	@Override
+	public Student getStudentById(Long id) {
+		// TODO Auto-generated method stub
+		return userservice.getStudentById(id);
+	}
+
+	@Override
+	public Course getCourseById(Long id) {
+		// TODO Auto-generated method stub
+		return userservice.getCourseById(id);
+	}
+}
 	
 
 //	@Override

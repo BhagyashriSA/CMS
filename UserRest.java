@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.in.cafe.pojo.Auther;
 import com.in.cafe.pojo.Book;
 import com.in.cafe.pojo.CafeUser;
+import com.in.cafe.pojo.Category;
+import com.in.cafe.pojo.Course;
 import com.in.cafe.pojo.Employee;
 import com.in.cafe.pojo.Manager;
 import com.in.cafe.pojo.Person;
+import com.in.cafe.pojo.Product;
+import com.in.cafe.pojo.Student;
 import com.in.cafe.pojo.User;
 import com.in.cafe.wrapper.UserWrapper;
 
@@ -102,6 +106,51 @@ public interface UserRest {
     @PostMapping("/send-attachment")
     public ResponseEntity<String> sendEmailWithAttachment(
     		@RequestBody Map<String, String> filePath);
+    
+    @PostMapping(path = "/create-product")
+    public ResponseEntity<String> createProduct(@RequestBody(required = true) Product product);
+    
+    @PostMapping(path = "/create-category")
+    public ResponseEntity<String> createCategory(@RequestBody(required = true) Category category);
+    
+    @GetMapping(path = "/getAllProduct")
+    public ResponseEntity<List<Product>> getAllProduct();
+    
+    @GetMapping(path = "/getAllCategory")
+    public ResponseEntity<List<Category>> getAllCategory();
+    
+    @GetMapping(path = "/getProductById/{ID}")
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long ID);
+    
+    @GetMapping(path = "/getCategoryById/{ID}")
+    public ResponseEntity<Optional<Category>> getCategoryById(@PathVariable Long id);
+    
+    @GetMapping("/product/{id}")
+    public Product getProById(@PathVariable Long id);
+    
+    @GetMapping("/category/{id}")
+    public Category getCatgryById(@PathVariable Long id);
+    
+    @PostMapping(path = "/create-student")
+    public Student createStudent(@RequestBody Student student);
+    
+    @PutMapping(path = "/save-course")
+    public Course createCourse(@RequestBody Course course);
+    
+    @GetMapping(path = "/getAllStudent")
+    public ResponseEntity<List<Student>> getAllStudent();
+    
+    @GetMapping(path = "/getallcourse")
+    public ResponseEntity<List<Course>> getAllCourse();
+    
+    @GetMapping(path = "/getStudentById/{id}")
+    public Student getStudentById(@PathVariable Long id);
+    
+    @GetMapping(path = "/getCourseById/{id}")
+    public Course getCourseById(@PathVariable Long id);
+
+
+
 
 } 
 
